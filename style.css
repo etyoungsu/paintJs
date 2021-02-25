@@ -47,6 +47,7 @@ body {
 }
 
 .controls .controls__colors {
+    position: relative;
     display: flex;
 }
 
@@ -60,4 +61,9 @@ body {
 
 .controls .controls__range {
     margin-bottom: 20px;
+}
+
+.controls__colors .jsPresent {
+    position: absolute;
+    right: 600px;
 }
