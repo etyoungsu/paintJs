@@ -2,17 +2,22 @@ const canvas = document.getElementById("jsCanvas");
 const ctx = canvas.getContext("2d");
 const colors = document.getElementsByClassName("jsColor");
 const range = document.getElementById("jsRange");
-const fill = document.getElementById("jsMode");
+const mode = document.getElementById("jsMode");
 const present = document.getElementsByClassName("jsPresent");
 
-canvas.width = 700;
-canvas.height = 700;
+const INITIAL_COLOR = "#2c2c2c";
+const CANVAS_SIZE = 700;
 
+canvas.width = CANVAS_SIZE;
+canvas.height = CANVAS_SIZE;
+
+ctx.fillStyle = "white";
+ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
 ctx.strokeStyle = "#2c2c2c";
 ctx.lineWidth = 2.5;
 
 let painting = false;
-let fillingAll = false;
+let filling = false;
 
 function stopPainting() {
     painting = false;
@@ -35,21 +40,10 @@ function onMouseMove(event) {
     }
 }
 
-function onMouseUp(event) {
-    stopPainting();
-}
-
 function handleColorClick(event) {
     const background = event.target.style.backgroundColor;
-    if (!fillingAll) {
-        ctx.strokeStyle = background;
-        present[0].style.backgroundColor = background;
-    }
-    else {
-        ctx.fillStyle = background;
-        ctx.fillRect(0, 0, 700, 700);
-        endFill();
-    }
+    ctx.strokeStyle = background;
+    ctx.fillStyle = background;
 }
 
 function handleRangeChange(event) {
@@ -57,19 +51,20 @@ function handleRangeChange(event) {
     ctx.lineWidth = size;
 }
 
-function endFill() {
-    fill.textContent = "FILL";
-    fillingAll = false;
-}
-
-function handleFill() {
-    if (!fillingAll) {
-        fill.textContent = "Paint";
-        fillingAll = true;
+function handleModeClick() {
+    if (!filling) {
+        filling = true;
+        mode.textContent = "Paint";
     }
     else {
-        fill.textContent = "FILL";
-        fillingAll = false;
+        filling = false;
+        mode.textContent = "FILL";
+    }
+}
+
+function handleCanvasClick() {
+    if (filling) {
+        ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
     }
 }
 
@@ -78,10 +73,11 @@ if (canvas) {
     canvas.addEventListener("mousedown", startPainting);
     canvas.addEventListener("mouseup", stopPainting);
     canvas.addEventListener("mouseleave", stopPainting);
+    canvas.addEventListener("click", handleCanvasClick);
 }
 
 Array.from(colors).forEach(color => color.addEventListener("click", handleColorClick));
 
 range.addEventListener("input", handleRangeChange);
 
-fill.addEventListener("click", handleFill);
+mode.addEventListener("click", handleModeClick);
